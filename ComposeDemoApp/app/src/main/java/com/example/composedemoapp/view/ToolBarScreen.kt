@@ -2,6 +2,7 @@ package com.example.composedemoapp.view
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,24 +33,33 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.composedemoapp.viewmodel.DemoDataViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ToolBarScreen : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ToolBarUI()
+            App()
         }
+    }
+
+    @Composable
+    fun App(){
+        itemList()
     }
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
-    @Preview
     @Composable
     fun ToolBarUI() {
         Scaffold(
@@ -78,7 +88,7 @@ class ToolBarScreen : ComponentActivity() {
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White),
 
-                )
+                    )
             },
 
             bottomBar = {
@@ -109,30 +119,25 @@ class ToolBarScreen : ComponentActivity() {
         ) {
             Text(text = "Hello World")
         }
-        listItem()
     }
-
 
     @Composable
     fun switchView() {
-        val isChecked = remember{ mutableStateOf(true) }
+        val isChecked = remember { mutableStateOf(true) }
         Switch(
-            checked =isChecked.value ,
+            checked = isChecked.value,
             modifier = Modifier
                 .padding(50.dp)
                 .size(20.dp),
-            onCheckedChange ={
-                isChecked.value=it
-            if (it){
-                Toast.makeText(this,"ON",Toast.LENGTH_SHORT).show()
-            }else{
-                Toast.makeText(this,"OFF",Toast.LENGTH_SHORT).show()
-            }
-        } )
+            onCheckedChange = {
+                isChecked.value = it
+                if (it) {
+                    Toast.makeText(this, "ON", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "OFF", Toast.LENGTH_SHORT).show()
+                }
+            })
     }
 
-    @Composable
-    fun listItem(){
-         Text(text = "Hello")
-    }
+
 }

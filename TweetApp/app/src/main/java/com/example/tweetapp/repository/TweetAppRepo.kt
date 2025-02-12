@@ -11,6 +11,7 @@ class TweetAppRepo @Inject constructor(private val tweetApi: TweetApi) {
     private val _category = MutableStateFlow<List<String>>(emptyList())
     val category: StateFlow<List<String>>
         get() = _category
+
     private val _tweets = MutableStateFlow<List<TweetsListItem>>(emptyList())
     val getTweets: StateFlow<List<TweetsListItem>>
         get() = _tweets
