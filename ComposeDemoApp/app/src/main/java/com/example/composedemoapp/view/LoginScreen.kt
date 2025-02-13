@@ -1,4 +1,5 @@
 package com.example.composedemoapp.view
+
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -40,7 +41,7 @@ class LoginScreen : ComponentActivity() {
     }
 
     private fun loginStatus(username: String, password: String) {
-        if (username == "vikash" && password == "123") {
+        if (username == "vikas" && password == "123") {
             Toast.makeText(this, "Logged In!!", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(this, "Getting Error", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,7 @@
 package com.example.composedemoapp.di
 
 import com.example.composedemoapp.api.DemoAPi
+import com.example.composedemoapp.data.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +16,7 @@ class NetworkModule {
     @Singleton
     @Provides
     fun getRetroInstance(): Retrofit {
-        return Retrofit.Builder().baseUrl("https://api.jsonbin.io")
+        return Retrofit.Builder().baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
