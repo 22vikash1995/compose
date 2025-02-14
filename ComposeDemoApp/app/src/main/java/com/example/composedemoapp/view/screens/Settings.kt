@@ -15,9 +15,9 @@ import androidx.compose.ui.unit.sp
 import com.example.composedemoapp.data.Constants
 
 @Composable
-fun Settings(modifier: Modifier) {
+fun Settings() {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.Red),
         verticalArrangement = Arrangement.Center,

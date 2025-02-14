@@ -15,20 +15,21 @@ import androidx.compose.ui.unit.sp
 import com.example.composedemoapp.data.Constants
 
 @Composable
-fun Notification(modifier: Modifier) {
+fun Notification(name: String?) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(Color.Blue),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = Constants.notification,
-            fontSize = 16.sp,
-            fontFamily = FontFamily.SansSerif,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
+            Text(
+                text = Constants.notification+"$name",
+                fontSize = 16.sp,
+                fontFamily = FontFamily.SansSerif,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+
     }
 }
