@@ -15,70 +15,96 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.example.composedemoapp.data.NavItem
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.composedemoapp.data.Constants
+import com.example.composedemoapp.data.NavItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
-
-    val itemList = listOf(
-        NavItem(Constants.home, Icons.Default.Home, 0),
-        NavItem(Constants.notification, Icons.Default.Notifications, 5),
-        NavItem(Constants.settings, Icons.Default.Settings, 0)
-    )
-
-    var selectedIndex by remember {
-        mutableIntStateOf(0)
-    }
+    val navController = rememberNavController()
 
     Scaffold(
-        modifier = Modifier
-            .fillMaxWidth(),
-        bottomBar = {
-            NavigationBar {
-                itemList.forEachIndexed { index, navItem ->
-                    NavigationBarItem(
-                        selected = selectedIndex == index,
-                        onClick = { selectedIndex = index },
-                        icon = {
-                            BadgedBox(badge = {
-                                if (navItem.badgeCount > 0) {
-                                    Badge {
-                                        Text(text = navItem.badgeCount.toString())
-                                    }
-                                }
-
-                            }) {
-
-                            }
-                            Icon(
-                                imageVector = navItem.icon,
-                                contentDescription = Constants.contentDescription
-                            )
-                        },
-                        label = { Text(text = navItem.label) }
-                    )
-                }
-            }
-        }
+        modifier = Modifier.fillMaxWidth(),
+        bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
-        ContentScreen(modifier = Modifier.padding(innerPadding), selectedIndex)
-    }
+        NavHost(
+            navController = navController,
+            startDestination = Constants.home,
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable(
+                route = Constants.home,
+            ) { HomeScreen(navController) }
 
+            composable(
+                route = Constants.notification + "/{name}",
+                arguments = listOf(navArgument("name") {
+                    type = NavType.StringType
+                    defaultValue = "No Value"
+                })
+            ) { backEntryStack ->
+                val name = backEntryStack.arguments?.getString("name") ?: "No name"
+                Notification(name)
+            }
+
+
+            composable(Constants.settings) { Settings() }
+        }
+    }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContentScreen(modifier: Modifier = Modifier, selectedIndex: Int) {
-    when (selectedIndex) {
-        0 -> {HomeScreen(modifier)}
-        1 -> { Notification(modifier)}
-        2 -> { Settings(modifier)}
-    }
+fun BottomNavigationBar(navController: NavController) {
+    val items = listOf(
+        NavItem(Constants.home, Icons.Default.Home, 0, Constants.home),
+        NavItem(
+            Constants.notification,
+            Icons.Default.Notifications,
+            5,
+            Constants.notification + "/No value"
+        ),
+        NavItem(Constants.settings, Icons.Default.Settings, 0, Constants.settings)
+    )
+    val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
+    NavigationBar {
+        items.forEach { item ->
+            NavigationBarItem(
+                selected = currentRoute == item.route,
+                onClick = {
+                    val route =
+                        if (item.route == Constants.notification) "${item.route}/default" else item.route
+                    navController.navigate(route) {
+                        launchSingleTop = true//to prevent duplicate entry
+                    }
+                },
+                icon = {
+                    BadgedBox(
+                        badge = {
+                            if (item.badgeCount > 0) {
+                                Badge { Text(text = item.badgeCount.toString()) }
+                            }
+                        },
+                        modifier = Modifier.padding(start = 20.dp)
+                    ) {}
+
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.label
+                    )
+                },
+                label = { Text(text = item.label) }
+            )
+        }
+    }
 }
